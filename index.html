@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Hetanshi ❤️ Kush</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
 <style>
 html, body {
   margin: 0;
@@ -14,12 +13,12 @@ html, body {
   overflow: hidden;
 }
 
-/* COMMON CENTERED CARD STYLE */
+/* COMMON CARD STYLE */
 .card {
   background: rgba(0,0,0,0.25);
   padding: 40px;
   border-radius: 20px;
-  max-width: 650px;
+  max-width: 700px;
   text-align: center;
   margin: auto;
   position: absolute;
@@ -39,11 +38,12 @@ button {
   cursor: pointer;
 }
 
+/* BUTTON COLORS */
 #yes { background: #ff4d6d; color: white; }
 #no { background: #444; color: white; position: absolute; }
 #musicBtn { background: white; color: #ff4d6d; margin-bottom: 20px; }
 
-/* Backgrounds */
+/* PAGE BACKGROUNDS */
 #page1 { 
   height: 100vh; 
   background: linear-gradient(135deg, #ff758c, #ff7eb3);
@@ -62,11 +62,11 @@ button {
   overflow: hidden;
 }
 
-/* Lanterns for page 3 */
+/* LANternS page */
 .lantern {
   position: absolute;
-  width: 40px;
-  height: 60px;
+  width: 30px;
+  height: 50px;
   background: radial-gradient(circle at 50% 30%, #fff6c7, #ff9f1c);
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(255,200,120,0.8);
@@ -75,35 +75,33 @@ button {
 }
 
 @keyframes rise {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-130vh); opacity: 0; }
+  from { transform: translateY(0) scale(0.8); opacity: 1; }
+  to { transform: translateY(-130vh) scale(1.2); opacity: 0; }
 }
 
-/* Boat */
 .boat {
   position: absolute;
   bottom: 20%;
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
+  width: 220px;
   z-index: 5;
+  filter: brightness(1.2);
 }
 
-/* Meme image */
+img { margin: 10px; border-radius: 15px; }
+
 .meme {
   position: fixed;
   width: 420px;
   max-width: 90vw;
   z-index: 20;
 }
-
-h1, p { margin: 15px 0; }
 </style>
 </head>
 
 <body>
 
-<!-- MUSIC -->
 <audio id="music" loop>
   <source src="https://cdn.pixabay.com/download/audio/2023/02/28/audio_6c6a5f19e0.mp3" type="audio/mp3">
 </audio>
@@ -132,7 +130,7 @@ h1, p { margin: 15px 0; }
   </div>
 </div>
 
-<!-- PAGE 2: GIFT -->
+<!-- PAGE 2: GIFTS -->
 <div id="page2">
   <div class="card">
     <h1>Flowers for you 🌸</h1>
@@ -146,21 +144,19 @@ h1, p { margin: 15px 0; }
   </div>
 </div>
 
-<!-- PAGE 3: LANTERNS -->
+<!-- PAGE 3: LANTERN NIGHT -->
 <div id="page3">
-  <div class="card" style="background: rgba(0,0,0,0.5);">
+  <div class="card" style="background: rgba(0,0,0,0.5); top: 10%;">
     <h1>See you tomorrow…</h1>
     <p>Let's make up for all the nice and sunny days we missed together 🌟</p>
   </div>
-  <img class="boat" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Small_boat_in_the_lake.jpg/320px-Small_boat_in_the_lake.jpg">
+  <img class="boat" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Small_boat_in_the_lake.jpg">
 </div>
 
 <script>
 function startMusic() {
   const music = document.getElementById("music");
-  music.play().catch(() => {
-    alert("Tap again to start music 🎵");
-  });
+  music.play().catch(() => alert("Tap again to start music 🎵"));
   document.getElementById("musicBtn").style.display = "none";
 }
 
@@ -171,11 +167,10 @@ function moveNo() {
 }
 
 function celebrate() {
-  // Hide proposal card
   const proposal = document.getElementById("proposal");
   proposal.innerHTML = "<h1>Yay! I knew you'd say yes 😍</h1><button onclick='gotoGiftPage()'>I have a gift for you 🎁</button>";
 
-  // Confetti + meme
+  // Confetti
   const meme = document.createElement("img");
   meme.src = "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExemxpZGtiejNmYXl2N3ZidDlha2JzYWNyeG9wam44bjAxbDlqNG9qZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rjkJD1v80CjYs/giphy.gif";
   meme.className = "meme";
@@ -186,7 +181,6 @@ function celebrate() {
 
   const duration = 7000;
   const end = Date.now() + duration;
-
   (function frame() {
     confetti({
       particleCount: 8,
@@ -198,24 +192,24 @@ function celebrate() {
   })();
 }
 
-// Navigate to gift page
 function gotoGiftPage() {
   document.getElementById("page1").style.display = "none";
   document.getElementById("page2").style.display = "block";
 }
 
-// Navigate to lantern page
 function gotoLanternPage() {
   document.getElementById("page2").style.display = "none";
   const page3 = document.getElementById("page3");
   page3.style.display = "block";
 
-  // Add lanterns
-  for (let i = 0; i < 25; i++) {
+  // Glowing lanterns
+  for (let i = 0; i < 30; i++) {
     const l = document.createElement("div");
     l.className = "lantern";
     l.style.left = Math.random() * 100 + "vw";
-    l.style.animationDelay = Math.random() * 5 + "s";
+    l.style.animationDelay = Math.random() * 10 + "s";
+    l.style.width = 20 + Math.random()*20 + "px";
+    l.style.height = 30 + Math.random()*30 + "px";
     page3.appendChild(l);
   }
 }
