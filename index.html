@@ -16,7 +16,18 @@
       color: white;
       text-align: center;
     }
-    .card {
+    .card  <button onclick="startMusic()" style="
+  background:#fff;
+  color:#ff4d6d;
+  border:none;
+  padding:10px 20px;
+  border-radius:20px;
+  font-size:1em;
+  margin-bottom:20px;
+">
+  Tap to start music ❤️
+</button>
+ {
       background: rgba(0,0,0,0.25);
       padding: 40px;
       border-radius: 20px;
@@ -59,9 +70,10 @@
 </head>
 <body>
 
-  <audio autoplay loop>
-    <source src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_1e8c0b2e93.mp3" type="audio/mp3">
-  </audio>
+ <audio id="music" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_1e8c0b2e93.mp3" type="audio/mp3">
+</audio>
+
 
   <div class="card">
     <h1>Hey Hetanshi ❤️</h1>
@@ -82,25 +94,50 @@
   </div>
 
   <script>
-    function yesClicked() {
-      document.body.innerHTML = `
-        <div style="
-          height:100vh;
-          display:flex;
-          justify-content:center;
-          align-items:center;
-          flex-direction:column;
-          background:linear-gradient(135deg,#ff758c,#ff7eb3);
-          color:white;
-          text-align:center;
-          font-family:Arial;
-        ">
-          <h1>You just made me the happiest person ❤️</h1>
-          <p>
-            Happy Valentine’s Day, Hetanshi.
-            <br><br>
-            With love,<br>
-            <strong>Kush</strong>
+ function startMusic() {
+  document.getElementById("music").play();
+}
+ function yesClicked() {
+    document.body.innerHTML = `
+      <div style="
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        flex-direction:column;
+        background:linear-gradient(135deg,#ff758c,#ff7eb3);
+        color:white;
+        text-align:center;
+        font-family:Arial;
+        overflow:hidden;
+      ">
+        <h1>You just made me the happiest person ❤️</h1>
+        <p>
+          Happy Valentine’s Day, Hetanshi.
+          <br><br>
+          With love,<br>
+          <strong>Kush</strong>
+        </p>
+      </div>
+    `;
+
+    for (let i = 0; i < 80; i++) {
+      const heart = document.createElement("div");
+      heart.innerHTML = "❤️";
+      heart.style.position = "fixed";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.top = "100vh";
+      heart.style.fontSize = Math.random() * 30 + 20 + "px";
+      heart.style.animation = "floatUp 4s ease-in forwards";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 4000);
+    }
+  }
+
+  function moveNo() {
+    const no = document.getElementB
+
           </p>
         </div>
       `;
