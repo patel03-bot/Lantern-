@@ -43,35 +43,31 @@ button {
 #musicBtn { background: white; color: #ff4d6d; margin-bottom: 20px; }
 
 /* PAGE BACKGROUNDS */
-#page1 { 
-  height: 100vh; 
-  background: linear-gradient(135deg, #ff758c, #ff7eb3);
-}
-
-#page2 { 
-  height: 100vh; 
-  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+.page {
+  height: 100vh;
+  width: 100%;
   display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#page3 { 
-  height: 100vh; 
-  background: radial-gradient(circle at bottom, #000 0%, #111 80%);
-  display: none;
-  overflow: hidden;
   position: relative;
 }
 
+/* PAGE 1 */
+#page1 { background: linear-gradient(135deg, #ff758c, #ff7eb3); display: flex; justify-content: center; align-items: center; }
+
+/* PAGE 2 */
+#page2 { background: linear-gradient(135deg, #ff758c, #ff7eb3); display: flex; justify-content: center; align-items: flex-start; flex-direction: column; }
+
+/* PAGE 3 */
+#page3 { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+/* PAGE 4 */
+#page4 { background: radial-gradient(circle at bottom, #000 0%, #111 80%); overflow: hidden; display: block; position: relative; }
+
 /* MEME IMAGE */
 .meme {
-  position: absolute;
   width: 400px;
   max-width: 90vw;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 20px auto 0 auto;
+  display: block;
   z-index: 5;
 }
 
@@ -111,15 +107,27 @@ button {
   filter: brightness(1.2);
 }
 
-/* WATER REFLECTION */
+/* WATER REFLECTION CONTAINER */
 #water {
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 50%;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
   z-index: 1;
-  filter: blur(4px);
+  overflow: hidden;
+}
+
+/* REFLECTION ANIMATION */
+.reflection {
+  transform: scaleY(-1);
+  opacity: 0.3;
+  filter: blur(2px);
+  animation: float 3s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) scaleY(-1); opacity: 0.3; }
+  100% { transform: translateY(10px) scaleY(-1); opacity: 0.25; }
 }
 </style>
 </head>
@@ -129,11 +137,19 @@ button {
   <source src="https://cdn.pixabay.com/download/audio/2023/02/28/audio_6c6a5f19e0.mp3" type="audio/mp3">
 </audio>
 
-<!-- PAGE 1: PROPOSAL -->
-<div id="page1">
-  <img id="meme" class="meme" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExemxpZGtiejNmYXl2N3ZidDlha2JzYWNyeG9wam44bjAxbDlqNG9qZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rjkJD1v80CjYs/giphy.gif">
-  <div class="card" id="proposal" style="top: 65%;">
-    <button id="musicBtn" onclick="startMusic()">Tap to start music ❤️</button>
+<!-- PAGE 1: YES/NO -->
+<div id="page1" class="page">
+  <div class="card">
+    <h1>Will you be my Valentine? 💖</h1>
+    <button id="yes" onclick="gotoMemePage()">YES 💕</button>
+    <button id="no" onmouseover="moveNo()">No 😢</button>
+  </div>
+</div>
+
+<!-- PAGE 2: MEME + WRITING -->
+<div id="page2" class="page">
+  <img class="meme" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExemxpZGtiejNmYXl2N3ZidDlha2JzYWNyeG9wam44bjAxbDlqNG9qZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rjkJD1v80CjYs/giphy.gif">
+  <div class="card" style="top: auto; position: relative;">
     <h1>Hey Hetanshi ❤️</h1>
     <p>
       This might not be the usual way people ask this…  
@@ -146,26 +162,22 @@ button {
       So I wanted to ask you in a language I enjoy…
       and with all my heart.
     </p>
-
-    <h1>Will you be my Valentine? 💖</h1>
-
-    <button id="yes" onclick="celebrate()">YES 💕</button>
-    <button id="no" onmouseover="moveNo()">No 😢</button>
+    <button onclick="gotoHuskyPage()">Next 🎁</button>
   </div>
 </div>
 
-<!-- PAGE 2: HUSKY GIFT -->
-<div id="page2" style="display: none; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<!-- PAGE 3: HUSKY -->
+<div id="page3" class="page">
   <div class="card">
     <h1>Flowers for you 🌸</h1>
     <p>For you 💖</p>
+    <img class="husky" src="https://i.imgur.com/fQ7Z2Jg.png" alt="Husky with flowers">
+    <button onclick="gotoLanternPage()">Next 🌌</button>
   </div>
-  <img class="husky" src="https://i.imgur.com/fQ7Z2Jg.png" alt="Husky with flowers">
-  <button onclick="gotoLanternPage()">Next 🌌</button>
 </div>
 
-<!-- PAGE 3: LANTERN NIGHT -->
-<div id="page3">
+<!-- PAGE 4: LANTERNS -->
+<div id="page4" class="page">
   <div id="water"></div>
   <div class="card" style="background: rgba(0,0,0,0.5); top: 10%;">
     <h1>See you tomorrow…</h1>
@@ -175,29 +187,24 @@ button {
 </div>
 
 <script>
-function startMusic() {
-  const music = document.getElementById("music");
-  music.play().catch(() => alert("Tap again to start music 🎵"));
-  document.getElementById("musicBtn").style.display = "none";
-}
-
 function moveNo() {
   const no = document.getElementById("no");
   no.style.left = Math.random() * 80 + "vw";
   no.style.top = Math.random() * 80 + "vh";
 }
 
-function celebrate() {
-  const proposal = document.getElementById("proposal");
-  proposal.innerHTML = "<h1>Yay! I knew you'd say yes 😍</h1><button onclick='gotoGiftPage()'>I have a gift for you 🎁</button>";
+// PAGE NAVIGATION
+function gotoMemePage() {
+  document.getElementById("page1").style.display = "none";
+  document.getElementById("page2").style.display = "flex";
 
-  // Confetti
-  const duration = 7000;
+  // Confetti for first page YES
+  const duration = 5000;
   const end = Date.now() + duration;
   (function frame() {
     confetti({
-      particleCount: 8,
-      spread: 100,
+      particleCount: 10,
+      spread: 120,
       origin: { x: Math.random(), y: Math.random() - 0.2 },
       colors: ['#ff4d6d', '#ff758c', '#fff']
     });
@@ -205,38 +212,35 @@ function celebrate() {
   })();
 }
 
-function gotoGiftPage() {
-  document.getElementById("page1").style.display = "none";
-  document.getElementById("page2").style.display = "flex";
-  // Remove meme after first page
-  const meme = document.getElementById("meme");
-  if (meme) meme.remove();
+function gotoHuskyPage() {
+  document.getElementById("page2").style.display = "none";
+  document.getElementById("page3").style.display = "flex";
 }
 
 function gotoLanternPage() {
-  document.getElementById("page2").style.display = "none";
-  const page3 = document.getElementById("page3");
-  page3.style.display = "block";
+  document.getElementById("page3").style.display = "none";
+  const page4 = document.getElementById("page4");
+  page4.style.display = "block";
 
-  // Lanterns with glow & flying up
+  const water = document.getElementById("water");
+
+  // Create lanterns and reflections
   for (let i = 0; i < 30; i++) {
-    const l = document.createElement("div");
-    l.className = "lantern";
-    l.style.left = Math.random() * 100 + "vw";
-    l.style.animationDelay = Math.random() * 10 + "s";
-    l.style.width = 20 + Math.random()*20 + "px";
-    l.style.height = 30 + Math.random()*30 + "px";
-    // Add soft glow
-    l.style.boxShadow = `0 0 ${20 + Math.random()*20}px rgba(255,200,150,0.7)`;
-    page3.appendChild(l);
+    const lantern = document.createElement("div");
+    lantern.className = "lantern";
+    lantern.style.left = Math.random() * 100 + "vw";
+    lantern.style.animationDelay = Math.random() * 10 + "s";
+    lantern.style.width = 20 + Math.random()*20 + "px";
+    lantern.style.height = 30 + Math.random()*30 + "px";
+    lantern.style.boxShadow = `0 0 ${20 + Math.random()*20}px rgba(255,200,150,0.7)`;
+    page4.appendChild(lantern);
 
-    // Create reflection
-    const refl = l.cloneNode(true);
-    refl.style.transform = "scaleY(-1)";
-    refl.style.opacity = "0.25";
-    refl.style.filter = "blur(2px)";
+    // reflection
+    const refl = lantern.cloneNode(true);
+    refl.className = "lantern reflection";
     refl.style.top = "50%";
-    page3.appendChild(refl);
+    refl.style.opacity = 0.25 + Math.random()*0.1;
+    water.appendChild(refl);
   }
 }
 </script>
