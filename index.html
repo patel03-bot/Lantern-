@@ -1,216 +1,766 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Hetanshi ❤️ Kush</title>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Will you be my Valentine?</title>
 
-/* COMMON CARD STYLE */
-.card {
-  background: rgba(0,0,0,0.25);
-  padding: 30px 40px;
-  border-radius: 20px;
-  max-width: 700px;
-  text-align: center;
-  margin: auto;
-  position: relative;
-  color: white;
-  z-index: 10;
-}
+  <!-- Confetti library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-button {
-  padding: 15px 30px;
-  margin: 12px;
-  font-size: 1.2em;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-}
+  <style>
+    :root {
+      --bg1: #ffd6e7;
+      --bg2: #ffeef6;
+      --card: #ffffffcc;
+      --yes: #ff3b7a;
+      --yesHover: #ff1f68;
+    }
 
-#yes { background: #ff4d6d; color: white; }
-#no { background: #444; color: white; position: absolute; }
-#musicBtn { background: white; color: #ff4d6d; margin-bottom: 20px; }
+    * { box-sizing: border-box; }
 
-/* PAGE STYLING */
-.page {
-  width: 100%;
-  height: 100vh;
-  display: none;
-  position: relative;
-  overflow: hidden;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      font-family: system-ui, sans-serif;
+      overflow: hidden;
+      padding: 16px;
+    }
 
-/* Page 1 */
-#page1 { display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #ff758c, #ff7eb3); }
+    /* FULL-SCREEN CONFETTI CANVAS */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
 
-/* Page 2 */
-#page2 { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; background: linear-gradient(135deg, #ff758c, #ff7eb3); padding-top: 30px; }
+    .card {
+      width: min(720px, 92vw);
+      padding: 26px 22px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border-radius: 22px;
+      text-align: center;
+      box-shadow: 0 18px 60px rgba(0,0,0,.15);
+    }
 
-/* Page 3 */
-#page3 { display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
+    .art {
+      width: min(220px, 70vw);
+      margin: 0 auto 8px;
+      display: block;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
+    }
 
-/* Page 4 */
-#page4 { display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle at bottom, #000 0%, #111 80%); }
+    h1 {
+      font-size: clamp(24px, 3.8vw, 40px);
+      margin: 10px 0 16px;
+    }
 
-/* Meme image */
-.meme {
-  width: 400px;
-  max-width: 90vw;
-  margin-bottom: 20px;
-  z-index: 5;
-}
+    .button-zone {
+      position: relative;
+      width: min(520px, 92%);
+      height: 150px;
+      margin: 0 auto;
+      touch-action: none;
+    }
 
-/* Comic bouquet image */
-.bouquet {
-  width: 250px;
-  max-width: 80vw;
-  border-radius: 15px;
-  margin-top: 20px;
-}
+    button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,.12);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, background .12s ease;
+    }
 
-/* Lanterns */
-.lantern {
-  position: absolute;
-  width: 30px;
-  height: 50px;
-  background: radial-gradient(circle at 50% 30%, #fff6c7, #ff9f1c);
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(255,200,120,0.8);
-  animation: rise 12s linear infinite;
-  opacity: 0.9;
-}
+    #yesBtn {
+      left: 18%;
+      background: var(--yes);
+      color: #fff;
+    }
+    #yesBtn:hover { background: var(--yesHover); }
 
-@keyframes rise {
-  from { transform: translateY(100vh) scale(0.8); opacity: 1; }
-  to { transform: translateY(-130vh) scale(1.2); opacity: 0; }
-}
+    #noBtn {
+      left: 62%;
+      background: #e5e7eb;
+      color: #111827;
+    }
 
-/* Lantern page text */
-#page4 .card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0,0,0,0.5);
-}
-</style>
+    .hint {
+      margin-top: 10px;
+      font-size: 13px;
+      opacity: .7;
+    }
+
+    .result {
+      display: none;
+      margin-top: 18px;
+      animation: pop .35s ease;
+    }
+
+    .result h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      margin: 8px 0;
+    }
+
+    .fireworks {
+      width: min(280px, 70vw);
+      margin: 0 auto;
+      display: block;
+    }
+
+    /* GIFT BUTTON */
+    #giftBtn {
+      position: static;
+      margin-top: 15px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background: var(--yes);
+      color: white;
+      transform: none;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    #giftBtn:hover {
+      background: var(--yesHover);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes pop {
+      from { transform: scale(.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* ENVELOPE PAGE */
+    .envelope-page {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      z-index: 10000;
+    }
+
+    .container-envelope {
+      height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+
+    .container-envelope > .envelope-wrapper {
+      background: #f5edd1;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .container-envelope .envelope-wrapper .envelope {
+      position: relative;
+      width: 300px;
+      height: 230px;
+    }
+
+    .envelope-wrapper > .envelope::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      z-index: 2;
+      border-top: 130px solid #ecdeb8;
+      border-right: 150px solid transparent;
+      border-left: 150px solid transparent;
+      transform-origin: top;
+      transition: all 0.5s ease-in-out 0.7s;
+    }
+
+    .container-envelope .envelope-wrapper .envelope::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      width: 0;
+      height: 0;
+      border-top: 130px solid transparent;
+      border-right: 150px solid #e6cfa7;
+      border-bottom: 100px solid #e6cfa7;
+      border-left: 150px solid #e6cfa7;
+    }
+
+    .envelope > .letter {
+      position: absolute;
+      right: 20%;
+      bottom: 0;
+      width: 54%;
+      height: 80%;
+      background: #fff;
+      text-align: center;
+      transition: all 1s ease-in-out;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      padding: 20px 10px;
+    }
+
+    .container-envelope .envelope-wrapper .envelope .letter .text {
+      font-size: clamp(18px, 4vw, 28px);
+      font-weight: 900;
+      color: #ff3b7a;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .heart {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 15px;
+      height: 15px;
+      background: #ff3b7a;
+      z-index: 999;
+      transform: translate(-50%, -20%) rotate(-45deg);
+      transition: transform 0.5s ease-in-out 1s;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: #ff3b7a;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -7.5px;
+    }
+
+    .heart::after {
+      right: -7.5px;
+    }
+
+    .flap .envelope::before {
+      transform: rotateX(180deg);
+      z-index: 0;
+    }
+
+    .flap .envelope .letter {
+      bottom: 100px;
+      transform: scale(1.5);
+      transition-delay: 1s;
+    }
+
+    .flap .heart {
+      transform: translate(-50%, -20%) rotate(90deg);
+      transition-delay: 0.4s;
+    }
+
+    .envelope-instruction {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      font-weight: 600;
+      color: #888;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-8px); }
+    }
+
+    /* SURPRISE BUTTON - exactly matches gift button */
+    #surpriseBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: var(--yes);
+      color: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,.12);
+      animation: popIn 0.5s ease 1s forwards;
+      opacity: 0;
+      z-index: 10001;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    #surpriseBtn:hover {
+      background: var(--yesHover);
+      transform: translateX(-50%);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateX(-50%) scale(0.9); }
+      to { opacity: 1; transform: translateX(-50%) scale(1); }
+    }
+
+    /* LANTERNS PAGE */
+    .lanterns-page {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 50%, #2d1b3d 100%);
+      z-index: 10002;
+      overflow: hidden;
+    }
+
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .lantern-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .lantern {
+      position: absolute;
+      width: 60px;
+      height: 80px;
+      bottom: -100px;
+      animation: float-up 15s ease-in infinite;
+      filter: drop-shadow(0 0 20px rgba(255,200,100,0.8));
+    }
+
+    @keyframes float-up {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120vh) translateX(var(--drift));
+        opacity: 0;
+      }
+    }
+
+    .lantern-body {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #fff4e6 0%, #ffb74d 40%, #ff9800 100%);
+      border-radius: 10px;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(255,255,200,0.8),
+                  0 0 30px rgba(255,200,100,0.6);
+    }
+
+    .lantern-top,
+    .lantern-bottom {
+      width: 70%;
+      height: 8px;
+      background: #8b4513;
+      position: absolute;
+      left: 15%;
+      border-radius: 4px;
+    }
+
+    .lantern-top { top: -4px; }
+    .lantern-bottom { bottom: -4px; }
+
+    .lantern-wire {
+      position: absolute;
+      width: 2px;
+      height: 20px;
+      background: #666;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -24px;
+    }
+
+    .lanterns-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      color: #fff;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(255,255,255,0.5),
+                   0 0 40px rgba(255,200,100,0.3);
+      z-index: 10;
+      animation: fadeInMessage 2s ease 1s forwards;
+      opacity: 0;
+      letter-spacing: 4px;
+    }
+
+    @keyframes fadeInMessage {
+      to { opacity: 1; }
+    }
+  </style>
 </head>
+
 <body>
+  <canvas id="confettiCanvas"></canvas>
 
-<audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2023/02/28/audio_6c6a5f19e0.mp3" type="audio/mp3">
-</audio>
+  <!-- MAIN PAGE -->
+  <main class="card" id="mainPage">
+    <!-- HUSKY WITH HEART -->
+    <svg class="art" viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="furDark" x1="0" x2="1">
+          <stop offset="0" stop-color="#9ca3af"/>
+          <stop offset="1" stop-color="#6b7280"/>
+        </linearGradient>
+        <linearGradient id="furLight" x1="0" x2="1">
+          <stop offset="0" stop-color="#f3f4f6"/>
+          <stop offset="1" stop-color="#e5e7eb"/>
+        </linearGradient>
+        <linearGradient id="heart" x1="0" x2="1">
+          <stop offset="0" stop-color="#ff4d7d"/>
+          <stop offset="1" stop-color="#ff1f68"/>
+        </linearGradient>
+      </defs>
 
-<!-- PAGE 1: Proposal -->
-<div id="page1" class="page">
-  <div class="card">
-    <button id="musicBtn" onclick="startMusic()">Tap to start music ❤️</button>
-    <h1>Hey Hetanshi ❤️</h1>
-    <p>
-      This might not be the usual way people ask this…  
-      but you know me — I like doing things a little differently.
-      <br><br>
-      From every laugh, every moment, and even our iconic  
-      <strong>“hi how are you”</strong>,  
-      you’ve become someone really special to me.
-      <br><br>
-      So I wanted to ask you in a language I enjoy…
-      and with all my heart.
-    </p>
-    <h1>Will you be my Valentine? 💖</h1>
-    <button id="yes" onclick="gotoMemePage()">YES 💕</button>
-    <button id="no" onmouseover="moveNo()">No 😢</button>
+      <!-- Heart -->
+      <path d="M210 40
+               C210 22 230 18 242 32
+               C254 18 274 22 274 40
+               C274 70 242 86 242 102
+               C242 86 210 70 210 40Z"
+            fill="url(#heart)"/>
+
+      <!-- Head -->
+      <ellipse cx="160" cy="145" rx="90" ry="80" fill="url(#furDark)"/>
+
+      <!-- Face mask -->
+      <ellipse cx="160" cy="165" rx="55" ry="45" fill="url(#furLight)"/>
+
+      <!-- Ears -->
+      <path d="M95 70 L60 20 L120 60 Z" fill="#6b7280"/>
+      <path d="M225 70 L260 20 L200 60 Z" fill="#6b7280"/>
+
+      <!-- Inner ears -->
+      <path d="M95 70 L75 35 L110 60 Z" fill="#d1d5db"/>
+      <path d="M225 70 L245 35 L210 60 Z" fill="#d1d5db"/>
+
+      <!-- Eyes -->
+      <circle cx="135" cy="145" r="7"/>
+      <circle cx="185" cy="145" r="7"/>
+
+      <!-- Nose -->
+      <path d="M160 158
+               C154 158 150 162 150 166
+               C150 172 160 176 160 176
+               C160 176 170 172 170 166
+               C170 162 166 158 160 158Z"
+            fill="#111827"/>
+
+      <!-- Smile -->
+      <path d="M160 176
+               C150 186 140 188 130 186"
+            stroke="#111827" stroke-width="3" fill="none"/>
+      <path d="M160 176
+               C170 186 180 188 190 186"
+            stroke="#111827" stroke-width="3" fill="none"/>
+    </svg>
+
+    <h1>Hetanshi will you be my valentine?</h1>
+
+    <section class="button-zone" id="zone">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </section>
+
+    <!-- HINT -->
+    <div class="hint" id="hint">"No" seems a bit shy 😈</div>
+
+    <section class="result" id="result">
+      <h2>YAY! 🎉</h2>
+      <img
+        class="fireworks"
+        src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExemxpZGtiejNmYXl2N3ZidDlha2JzYWNyeG9wam44bjAxbDlqNG9qZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rjkJD1v80CjYs/giphy.gif"
+        alt="Meme"
+      />
+      <button id="giftBtn">I have a gift for you 🎁</button>
+    </section>
+  </main>
+
+  <!-- ENVELOPE PAGE -->
+  <div class="envelope-page" id="envelopePage">
+    <div class="container-envelope">
+      <div class="envelope-wrapper" id="envelopeWrapper">
+        <div class="envelope">
+          <div class="letter">
+            <div class="text">
+              You dumbass! 😝
+            </div>
+          </div>
+        </div>
+        <div class="heart" id="heart"></div>
+      </div>
+    </div>
+    <p class="envelope-instruction">Click the heart!</p>
+    <button id="surpriseBtn">Ok one last surprise ✨</button>
   </div>
-</div>
 
-<!-- PAGE 2: Meme + text below -->
-<div id="page2" class="page">
-  <img class="meme" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExemxpZGtiejNmYXl2N3ZidDlha2JzYWNyeG9wam44bjAxbDlqNG9qZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rjkJD1v80CjYs/giphy.gif">
-  <div class="card">
-    <h1>Yay! I knew you'd say yes 😍</h1>
-    <button onclick="gotoHuskyPage()">I have a gift for you 🎁</button>
+  <!-- LANTERNS PAGE -->
+  <div class="lanterns-page" id="lanternsPage">
+    <div class="stars" id="stars"></div>
+    <div class="lantern-container" id="lanternContainer"></div>
+    <div class="lanterns-message">LASGO</div>
   </div>
-</div>
 
-<!-- PAGE 3: Comic bouquet -->
-<div id="page3" class="page">
-  <img class="bouquet" src="https://i.imgur.com/0hXcZtw.png" alt="Comic bouquet">
-  <button onclick="gotoLanternPage()">Next 🌌</button>
-</div>
+  <script>
+    const zone = document.getElementById("zone");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const result = document.getElementById("result");
+    const hint = document.getElementById("hint");
+    const giftBtn = document.getElementById("giftBtn");
+    const mainPage = document.getElementById("mainPage");
+    const envelopePage = document.getElementById("envelopePage");
+    const envelopeWrapper = document.getElementById("envelopeWrapper");
+    const heart = document.getElementById("heart");
+    const surpriseBtn = document.getElementById("surpriseBtn");
+    const lanternsPage = document.getElementById("lanternsPage");
+    const lanternContainer = document.getElementById("lanternContainer");
+    const starsContainer = document.getElementById("stars");
 
-<!-- PAGE 4: Lanterns + centered text -->
-<div id="page4" class="page">
-  <div class="card">
-    <h1>See you tomorrow…</h1>
-    <p>Let's make up for all the nice and sunny days we missed together 🌟</p>
-  </div>
-</div>
+    // Debug logging
+    console.log("Heart element:", heart);
+    console.log("Envelope wrapper:", envelopeWrapper);
 
-<script>
-function startMusic() {
-  const music = document.getElementById("music");
-  music.play().catch(() => alert("Tap again to start music 🎵"));
-  document.getElementById("musicBtn").style.display = "none";
-}
+    /* ---------- CONFETTI ---------- */
+    const confettiCanvas = document.getElementById("confettiCanvas");
 
-function moveNo() {
-  const no = document.getElementById("no");
-  no.style.left = Math.random() * 80 + "vw";
-  no.style.top = Math.random() * 80 + "vh";
-}
+    function resizeConfettiCanvas() {
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      confettiCanvas.width = Math.floor(window.innerWidth * dpr);
+      confettiCanvas.height = Math.floor(window.innerHeight * dpr);
+      confettiCanvas.style.width = "100vw";
+      confettiCanvas.style.height = "100vh";
+    }
 
-// PAGE NAVIGATION
-function gotoMemePage() {
-  document.getElementById("page1").style.display = "none";
-  document.getElementById("page2").style.display = "flex";
+    resizeConfettiCanvas();
+    window.addEventListener("resize", resizeConfettiCanvas);
+    window.addEventListener("orientationchange", () => setTimeout(resizeConfettiCanvas, 150));
 
-  // Confetti for YES
-  const duration = 5000;
-  const end = Date.now() + duration;
-  (function frame() {
-    confetti({
-      particleCount: 10,
-      spread: 120,
-      origin: { x: Math.random(), y: Math.random() - 0.2 },
-      colors: ['#ff4d6d', '#ff758c', '#fff']
+    const confettiInstance = confetti.create(confettiCanvas, {
+      resize: false,
+      useWorker: true
     });
-    if (Date.now() < end) requestAnimationFrame(frame);
-  })();
-}
 
-function gotoHuskyPage() {
-  document.getElementById("page2").style.display = "none";
-  document.getElementById("page3").style.display = "flex";
-}
+    function fullScreenConfetti() {
+      const end = Date.now() + 1600;
 
-function gotoLanternPage() {
-  document.getElementById("page3").style.display = "none";
-  const page4 = document.getElementById("page4");
-  page4.style.display = "flex";
+      (function frame() {
+        confettiInstance({
+          particleCount: 12,
+          spread: 90,
+          startVelocity: 45,
+          ticks: 180,
+          origin: { x: Math.random(), y: Math.random() * 0.3 }
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
 
-  // Lanterns from bottom to top
-  for (let i = 0; i < 30; i++) {
-    const lantern = document.createElement("div");
-    lantern.className = "lantern";
-    lantern.style.left = Math.random() * 100 + "vw";
-    lantern.style.animationDelay = Math.random() * 10 + "s";
-    lantern.style.width = 20 + Math.random()*20 + "px";
-    lantern.style.height = 30 + Math.random()*30 + "px";
-    page4.appendChild(lantern);
-  }
-}
-</script>
+      setTimeout(() => {
+        confettiInstance({
+          particleCount: 300,
+          spread: 140,
+          startVelocity: 60,
+          ticks: 220,
+          origin: { x: 0.5, y: 0.55 }
+        });
+      }, 300);
+    }
 
+    /* ---------- YES BUTTON GROWS ---------- */
+    let yesScale = 1;
+    function growYes() {
+      yesScale = Math.min(2.2, yesScale + 0.1);
+      yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
+    }
+
+    /* ---------- NO BUTTON RUNS AWAY ---------- */
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function moveNo(px, py) {
+      const z = zone.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+
+      let dx = (b.left + b.width / 2) - px;
+      let dy = (b.top + b.height / 2) - py;
+      let mag = Math.hypot(dx, dy) || 1;
+      dx /= mag;
+      dy /= mag;
+
+      let newLeft = (b.left - z.left) + dx * 150;
+      let newTop  = (b.top - z.top) + dy * 150;
+
+      newLeft = clamp(newLeft, 0, z.width - b.width);
+      newTop  = clamp(newTop, 0, z.height - b.height);
+
+      noBtn.style.left = newLeft + "px";
+      noBtn.style.top = newTop + "px";
+      noBtn.style.transform = "none";
+
+      growYes();
+    }
+
+    zone.addEventListener("pointermove", e => {
+      const b = noBtn.getBoundingClientRect();
+      const d = Math.hypot(
+        (b.left + b.width / 2) - e.clientX,
+        (b.top + b.height / 2) - e.clientY
+      );
+      if (d < 140) moveNo(e.clientX, e.clientY);
+    });
+
+    noBtn.addEventListener("click", e => e.preventDefault());
+
+    /* ---------- YES CLICK ---------- */
+    yesBtn.addEventListener("click", () => {
+      zone.style.display = "none";
+      hint.style.display = "none";
+      result.style.display = "block";
+      resizeConfettiCanvas();
+      fullScreenConfetti();
+    });
+
+    /* ---------- GIFT BUTTON ---------- */
+    giftBtn.addEventListener("click", () => {
+      mainPage.style.display = "none";
+      envelopePage.style.display = "block";
+    });
+
+    /* ---------- ENVELOPE CLICK ---------- */
+    if (heart) {
+      heart.addEventListener("click", (e) => {
+        e.stopPropagation();
+        console.log("Heart clicked!");
+        envelopeWrapper.classList.toggle("flap");
+        console.log("Flap class:", envelopeWrapper.classList.contains("flap"));
+        // Show surprise button after letter appears
+        if (envelopeWrapper.classList.contains("flap")) {
+          setTimeout(() => {
+            surpriseBtn.style.display = "block";
+          }, 2000);
+        }
+      });
+    } else {
+      console.error("Heart element not found!");
+    }
+
+    // Backup: click anywhere on envelope wrapper
+    envelopeWrapper.addEventListener("click", () => {
+      console.log("Envelope wrapper clicked!");
+      envelopeWrapper.classList.toggle("flap");
+      if (envelopeWrapper.classList.contains("flap")) {
+        setTimeout(() => {
+          surpriseBtn.style.display = "block";
+        }, 2000);
+      }
+    });
+
+    /* ---------- SURPRISE BUTTON ---------- */
+    surpriseBtn.addEventListener("click", () => {
+      envelopePage.style.display = "none";
+      lanternsPage.style.display = "block";
+      createStars();
+      createLanterns();
+    });
+
+    /* ---------- CREATE STARS ---------- */
+    function createStars() {
+      for (let i = 0; i < 150; i++) {
+        const star = document.createElement("div");
+        star.className = "star";
+        const size = Math.random() * 3 + 1;
+        star.style.width = size + "px";
+        star.style.height = size + "px";
+        star.style.left = Math.random() * 100 + "%";
+        star.style.top = Math.random() * 100 + "%";
+        star.style.animationDelay = Math.random() * 3 + "s";
+        starsContainer.appendChild(star);
+      }
+    }
+
+    /* ---------- CREATE LANTERNS ---------- */
+    function createLanterns() {
+      const numLanterns = 30;
+      
+      for (let i = 0; i < numLanterns; i++) {
+        setTimeout(() => {
+          const lantern = document.createElement("div");
+          lantern.className = "lantern";
+          
+          // Random horizontal position
+          lantern.style.left = Math.random() * 100 + "%";
+          
+          // Random delay
+          lantern.style.animationDelay = Math.random() * 5 + "s";
+          
+          // Random drift
+          const drift = (Math.random() - 0.5) * 200;
+          lantern.style.setProperty("--drift", drift + "px");
+          
+          // Random size variation
+          const scale = 0.7 + Math.random() * 0.6;
+          lantern.style.transform = `scale(${scale})`;
+          
+          lantern.innerHTML = `
+            <div class="lantern-wire"></div>
+            <div class="lantern-top"></div>
+            <div class="lantern-body"></div>
+            <div class="lantern-bottom"></div>
+          `;
+          
+          lanternContainer.appendChild(lantern);
+        }, i * 300);
+      }
+    }
+  </script>
 </body>
 </html>
